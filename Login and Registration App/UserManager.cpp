@@ -5,11 +5,65 @@ using namespace std;
 
 void UserManager::registerUser() {
 	string username = "Admin", password = "Admin";
+    int UsernameAttempts = 0, PasswordAttempts = 0;
+    
+    while (UsernameAttempts < 3)
+    {
+        cout << "Please enter your username: " << endl;
+        cin >> username;
 
-	cout << "Please enter your username: " << endl;
-	cin >> username;
-	cout << "Please enter your password: " << endl;
-	cin >> password;
+        if (username.length() < 8 || username.length() > 15)
+        {
+            cout << "Please enter a valid username!" << endl;
+            UsernameAttempts++;
+            continue;
+        }
+
+        if (isdigit(username[0]) || ispunct(username[0]))
+        {
+            cout << "Username cannot start with a number or special character." << endl;
+            UsernameAttempts++;
+            continue;
+        }
+
+        bool validUsername = true;
+        for (char c: username)
+        {
+            if (!isalpha(c))
+            {
+                validUsername = false;
+                break;
+            }
+        }
+
+        if (!validUsername)
+        {
+            cout << "Username must contain only alphabetic characters." << endl;
+            UsernameAttempts++;
+            continue;
+        }
+        break;
+    }
+    if (UsernameAttempts == 3) {
+        cout << "You have exceeded the maximum number of attempts." << endl;
+        return;
+    }
+
+    while (PasswordAttempts < 3)
+    {
+        cout << "Please enter your Password: " << endl;
+        cin >> password;
+
+        if (password.length() < 8 || password.length() > 15)
+        {
+            cout << "Please enter a valid password." << endl;
+            PasswordAttempts++;
+        }
+        else
+        {
+            break;
+        }
+    }
 
     if (userDatabase.find(username) == userDatabase.end()) {
         userDatabase[username] = password;

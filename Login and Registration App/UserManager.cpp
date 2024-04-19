@@ -3,16 +3,20 @@
 
 using namespace std;
 
+static string username = "Admin";
+static string password = "Admin";
+
 void UserManager::registerUser() {
-	string username = "Admin", password = "Admin";
-    int UsernameAttempts = 0, PasswordAttempts = 0;
-    
+    int UsernameAttempts = 0;
+    const int UsernameMin = 8;
+    const int UsernameMax = 15;
+
     while (UsernameAttempts < 3)
     {
         cout << "Please enter your username: " << endl;
         cin >> username;
 
-        if (username.length() < 8 || username.length() > 15)
+        if (username.length() < UsernameMin || username.length() > UsernameMax)
         {
             cout << "Please enter a valid username!" << endl;
             UsernameAttempts++;
@@ -44,35 +48,73 @@ void UserManager::registerUser() {
         }
         break;
     }
-    if (UsernameAttempts == 3) {
+    if (UsernameAttempts == 3) 
+    {
         cout << "You have exceeded the maximum number of attempts." << endl;
         return;
     }
+}
 
-    while (PasswordAttempts < 3)
-    {
-        cout << "Please enter your Password: " << endl;
+void UserManager::registerPassword() {
+    int PasswordAttempts = 0;
+    const int PasswordLimit = 8;
+
+    while (PasswordAttempts < 3) {
+        cout << "Please enter your password: ";
         cin >> password;
 
-        if (password.length() < 8 || password.length() > 15)
-        {
-            cout << "Please enter a valid password." << endl;
+        if (password.length() < PasswordLimit) {
+            cout << "Password must be at least " << PasswordLimit << " characters long!" << endl;
             PasswordAttempts++;
+            continue;
         }
-        else
-        {
-            break;
+
+        bool isDigit = false, isUppercase = false, isLowercase = false, isSpecialCharacter = false;
+
+        for (char c : password) {
+            if (isdigit(c)) {
+                isDigit = true;
+            }
+            else if (ispunct(c)) {
+                isSpecialCharacter = true;
+            }
+            else if (islower(c)) {
+                isLowercase = true;
+            }
+            else if (isupper(c)) {
+                isUppercase = true;
+            }
         }
+
+        if (!(isDigit && isSpecialCharacter && isLowercase && isUppercase)) {
+            cout << "Password must contain at least one digit, one special character, one lowercase letter, and one uppercase letter!" << endl;
+            PasswordAttempts++;
+            continue;
+        }
+
+        // If the password meets the criteria, exit the loop
+        break;
     }
 
-    if (userDatabase.find(username) == userDatabase.end()) {
-        userDatabase[username] = password;
+    if (PasswordAttempts == 3) {
+        cout << "You have exceeded the maximum number of attempts." << endl;
+        return;
+    }
+}
+
+void UserManager::FirstTimeUser()
+{
+    if (userDatabase.find(username) == userDatabase.end())
+    {
+        userDatabase[username] = password; 
         cout << "Registration successful!" << endl;
     }
-    else {
+    else
+    {
         cout << "Username already exists!" << endl;
     }
 }
+
 
 bool UserManager::loginUser() 
 {
@@ -121,6 +163,8 @@ int main() {
         {
         case '1':
             User.registerUser();
+            User.registerPassword();
+            User.FirstTimeUser();
             break;
 
         case '2':

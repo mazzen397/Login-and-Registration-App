@@ -7,6 +7,8 @@
 class UserManager {
 public:
     void registerUser();
+    void registerPassword();
+    void FirstTimeUser();
     bool loginUser();
 
 private:

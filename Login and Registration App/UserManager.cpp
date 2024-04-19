@@ -87,7 +87,7 @@ void UserManager::registerPassword() {
         }
 
         if (!(isDigit && isSpecialCharacter && isLowercase && isUppercase)) {
-            cout << "Password must contain at least one digit, one special character, one lowercase letter, and one uppercase letter!" << endl;
+            cout << "Weak Password!" << endl;
             PasswordAttempts++;
             continue;
         }

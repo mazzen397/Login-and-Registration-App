@@ -66,11 +66,11 @@ void UserManager::registerPassword() {
     while (PasswordAttempts < 3) {
         if (newPassword)
         {
-            cout << "Please enter your new password: ";
+            cout << "Please enter your new password: " << endl;
         }
         else
         {
-            cout << "Please enter your password: ";
+            cout << "Please enter your password: " << endl;
         }
         cin >> password;
 
@@ -120,10 +120,12 @@ void UserManager::forgetPassword()
     {
         cout << "Please enter your email address: " << endl;
         cin >> email;
-        if (userDatabase.find(email) == userDatabase.end())
+        if (userDatabase.find(email) != userDatabase.end())
         {
             newPassword = true;
             registerPassword();
+            cout << "Your new password is:" << password << endl;
+            userDatabase[email].password = password;
             break;
         }
         else
@@ -133,12 +135,17 @@ void UserManager::forgetPassword()
             continue;
         }
     }
+    if (forgetPasswordAttempts == 3)
+    {
+        cout << "You have exceeded the maximum number of attemots. Exiting..." << endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 void UserManager::registerEmail()
 {
     int emailAttempts = 0;
-    regex pattern(R"(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\.com\b)");
+    regex pattern(R"(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b)");
     bool validEmail = false;
 
     while (emailAttempts < 3)
@@ -159,7 +166,7 @@ void UserManager::registerEmail()
     }
     if (emailAttempts == 3)
     {
-        cout << "You have exceeded the maximum number of attemots. Exiting..." << endl;
+        cout << "You have exceeded the maximum number of attempts. Exiting..." << endl;
         exit(EXIT_FAILURE);
     }
 }

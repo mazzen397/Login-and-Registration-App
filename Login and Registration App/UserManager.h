@@ -15,6 +15,7 @@ class UserManager {
 public:
     void registerUser();
     void registerPassword();
+    void forgetPassword();
     void registerEmail();
     void FirstTimeUser();
     bool loginUser();

@@ -1,12 +1,14 @@
 #include "UserManager.h"
 #include <iostream>
 #include <regex>
+#include <cstdlib> 
 
 using namespace std;
 
 static string username = "Admin";
 static string password = "Admin";
 static string email = "Admin";
+static bool newPassword = false;
 
 void UserManager::registerUser() {
     int UsernameAttempts = 0;
@@ -52,8 +54,8 @@ void UserManager::registerUser() {
     }
     if (UsernameAttempts == 3) 
     {
-        cout << "You have exceeded the maximum number of attempts." << endl;
-        return;
+        cout << "You have exceeded the maximum number of attemots. Exiting..." << endl;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -62,7 +64,14 @@ void UserManager::registerPassword() {
     const int PasswordLimit = 8;
 
     while (PasswordAttempts < 3) {
-        cout << "Please enter your password: ";
+        if (newPassword)
+        {
+            cout << "Please enter your new password: ";
+        }
+        else
+        {
+            cout << "Please enter your password: ";
+        }
         cin >> password;
 
         if (password.length() < PasswordLimit) {
@@ -99,15 +108,37 @@ void UserManager::registerPassword() {
     }
 
     if (PasswordAttempts == 3) {
-        cout << "You have exceeded the maximum number of attempts." << endl;
-        return;
+        cout << "You have exceeded the maximum number of attemots. Exiting..." << endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+void UserManager::forgetPassword()
+{   
+    int forgetPasswordAttempts = 0;
+    while (forgetPasswordAttempts < 3)
+    {
+        cout << "Please enter your email address: " << endl;
+        cin >> email;
+        if (userDatabase.find(email) == userDatabase.end())
+        {
+            newPassword = true;
+            registerPassword();
+            break;
+        }
+        else
+        {
+            cout << "Email does not exist!" << endl;
+            forgetPasswordAttempts++;
+            continue;
+        }
     }
 }
 
 void UserManager::registerEmail()
 {
     int emailAttempts = 0;
-    regex pattern(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
+    regex pattern(R"(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\.com\b)");
     bool validEmail = false;
 
     while (emailAttempts < 3)
@@ -125,6 +156,11 @@ void UserManager::registerEmail()
             emailAttempts++;
             continue;
         }
+    }
+    if (emailAttempts == 3)
+    {
+        cout << "You have exceeded the maximum number of attemots. Exiting..." << endl;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -193,9 +229,10 @@ int main() {
     UserManager User;
     char choice;
     do {
-        cout << "1. Register\n";
-        cout << "2. Login\n";
-        cout << "3. Exit\n";
+        cout << "1. Register" << endl;
+        cout << "2. Login" << endl;
+        cout << "3. Forget password" << endl;
+        cout << "4. Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -213,6 +250,10 @@ int main() {
             break;
 
         case '3':
+            User.forgetPassword();
+            break;
+
+        case '4':
             cout << "Exiting..." << endl;
             break;
 
@@ -220,7 +261,7 @@ int main() {
             cout << "Invalid Choice" << endl;
             break;
         }
-    } while (choice != '3');
+    } while (choice != '4');
  
     return 0;
 }

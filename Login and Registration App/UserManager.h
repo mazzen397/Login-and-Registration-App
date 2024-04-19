@@ -4,15 +4,23 @@
 #include <unordered_map>
 #include <string>
 
+using namespace std;
+
+struct UserInfo {
+    string password;
+    string email;
+};
+
 class UserManager {
 public:
     void registerUser();
     void registerPassword();
+    void registerEmail();
     void FirstTimeUser();
     bool loginUser();
 
 private:
-    std::unordered_map<std::string, std::string> userDatabase;
+    unordered_map<string, UserInfo> userDatabase;
 };
 
 #endif // USER_MANAGER_H

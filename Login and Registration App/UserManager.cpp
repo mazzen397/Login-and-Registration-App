@@ -1,10 +1,12 @@
 #include "UserManager.h"
 #include <iostream>
+#include <regex>
 
 using namespace std;
 
 static string username = "Admin";
 static string password = "Admin";
+static string email = "Admin";
 
 void UserManager::registerUser() {
     int UsernameAttempts = 0;
@@ -102,35 +104,73 @@ void UserManager::registerPassword() {
     }
 }
 
+void UserManager::registerEmail()
+{
+    int emailAttempts = 0;
+    regex pattern(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
+    bool validEmail = false;
+
+    while (emailAttempts < 3)
+    {
+        cout << "Please enter your email address: " << endl;
+        cin >> email;
+
+        if (regex_match(email, pattern))
+        {
+            break;
+        }
+        else
+        {
+            cout << "Invalid email address!" << endl;
+            emailAttempts++;
+            continue;
+        }
+    }
+}
+
 void UserManager::FirstTimeUser()
 {
-    if (userDatabase.find(username) == userDatabase.end())
+    UserInfo userInfo;
+
+    if (userDatabase.find(username) == userDatabase.end() && userDatabase.find(email) == userDatabase.end()) 
     {
-        userDatabase[username] = password; 
+        userDatabase[username].password = password; 
+        userDatabase[email].password = password;
         cout << "Registration successful!" << endl;
     }
     else
     {
-        cout << "Username already exists!" << endl;
+        cout << "Username or email address already exists!" << endl;
     }
 }
 
-
 bool UserManager::loginUser() 
 {
-    string username = "Admin", password = "Admin";
+    string username = "Admin", password = "Admin", email= "Admin";
 
-    cout << "Please enter your username: " << endl;
+    cout << "Please enter your username or email address: " << endl;
     cin >> username;
+
+    size_t atPos = username.find('@');
+    if (atPos != string::npos)
+    {
+        email = username;
+    }
+    else
+    {
+        email = "Admin";
+    }
+
     cout << "Please enter your password: " << endl;
     cin >> password;
+    
 
-    if (userDatabase.find(username) != userDatabase.end())
+    if (userDatabase.find(username) != userDatabase.end() || userDatabase.find(email) != userDatabase.end())
     {   
         /* 1. Username exists in the database
            2.Check for the Password          */ 
 
-        if (userDatabase[username] == password)
+        if (userDatabase[username].password == password || userDatabase[email].password == password)
         {
             cout << "Login Successful" << endl;
             return true;
@@ -164,6 +204,7 @@ int main() {
         case '1':
             User.registerUser();
             User.registerPassword();
+            User.registerEmail();
             User.FirstTimeUser();
             break;
 
